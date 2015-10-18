@@ -34,8 +34,8 @@ bool j1Scene::Awake()
 bool j1Scene::Start()
 {
 	//App->map->Load("mario.tmx");
-	App->map->Load("hello2.tmx");
-	//App->map->Load("iso.tmx");
+	//App->map->Load("hello2.tmx");
+	App->map->Load("iso.tmx");
 	//LoadImg("data/textures/test.png");
 	LoadMusic("data/audio/music/music_sadpiano.ogg");
 	return true;
