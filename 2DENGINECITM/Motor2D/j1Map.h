@@ -126,7 +126,10 @@ private:
 	bool loadTileSet(int nTileSets);
 	SDL_Texture* LoadRootTileGraphics(SDL_Texture*);
 	bool LoadLayer(int);
-	
+
+	int MapToWorldX(int,int)const;
+
+	int MapToWorldY(int,int)const;
 
 public:
 

@@ -33,7 +33,9 @@ bool j1Scene::Awake()
 // Called before the first frame
 bool j1Scene::Start()
 {
-	App->map->Load("mario.tmx");
+	//App->map->Load("mario.tmx");
+	App->map->Load("hello2.tmx");
+	//App->map->Load("iso.tmx");
 	//LoadImg("data/textures/test.png");
 	LoadMusic("data/audio/music/music_sadpiano.ogg");
 	return true;
@@ -63,18 +65,31 @@ bool j1Scene::Update(float dt)
 		LowerVolume();
 
 	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		App->render->camera.y -= 1;
+		App->render->camera.y += 10;
 
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		App->render->camera.y += 1;
+		App->render->camera.y -= 10;
 
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		App->render->camera.x -= 1;
+		App->render->camera.x += 10;
 
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		App->render->camera.x += 1;
+		App->render->camera.x -= 10;
 
 	App->map->Draw();
+	/*
+	int x, y;
+	App->input->GetMousePosition(x, y);
+	iPoint map_coordinates = App->map->WorldToMap(x - App->render->camera.x, y - App->render->camera.y);
+	p2SString title("Map:%dx%d Tiles:%dx%d Tilesets:%d Tile:%d,%d",
+		App->map->GetMapNode()->width, App->map->GetMapNode()->height,
+		App->map->GetMapNode()->tileWidth, App->map->GetMapNode()->tileHeigth,
+		App->map->GetMapNode()->tiles.count(),
+		map_coordinates.x, map_coordinates.y);
+
+	App->win->SetTitle(title.GetString());
+	*/
+
 
 	//App->render->Blit(img, 0, 0);
 	return true;

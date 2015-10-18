@@ -53,7 +53,8 @@ void j1Map::Draw()
 		{
 			for (int k = 0; k < map.width ; k++)
 			{
-				App->render->Blit(gameArtTiles, k*map.tileWidth, j*map.tileHeigth, &GetTileRect(Get(k,j)));
+				App->render->Blit(gameArtTiles, MapToWorldX(k, j), MapToWorldY(k, j), &GetTileRect(Get(k, j)));
+				LOG("X: %d Y: %d ", MapToWorldX(k, j), MapToWorldY(k, j));
 			}
 		}
 	
@@ -66,6 +67,48 @@ void j1Map::Draw()
 
 
 }
+
+int j1Map::MapToWorldX(int x, int y)const
+{
+	int transformedXCoordinate = 0;
+	
+	if (map.orient == ORTHOGONAL)
+	{
+		transformedXCoordinate = x * map.tileWidth;
+	}
+	else if (map.orient == ISOMETRIC)
+	{
+		transformedXCoordinate = (x - y) * (map.tileWidth * 0.5f);
+	}
+	return transformedXCoordinate;
+}
+
+
+int j1Map::MapToWorldY(int x, int y)const
+{
+	int transformedYCoordinate = 0;
+
+	if (map.orient == ORTHOGONAL)
+	{
+		transformedYCoordinate = y * map.tileHeigth;
+	}
+	else if (map.orient == ISOMETRIC)
+	{
+		transformedYCoordinate = (x + y) * (map.tileHeigth * 0.5f);
+	}
+	return transformedYCoordinate;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 // Called before quitting
 bool j1Map::CleanUp()
@@ -156,14 +199,22 @@ int j1Map::LoadMapInfo()
 		map.widthPx = map_file.child("map").child("tileset").child("image").attribute("width").as_int();
 		map.heightPx = map_file.child("map").child("tileset").child("image").attribute("height").as_int();
 		
-		
+		LOG("Orientation: %s",map_file.child("map").attribute("orientation").as_string());
 
-		if (map_file.child("map").attribute("orientation").as_string() == "ORTHOGONAL")
+		p2SString orientation(map_file.child("map").attribute("orientation").as_string());
+		p2SString renderOrder(map_file.child("map").attribute("renderorder").as_string());
+
+
+		if (orientation == "orthogonal")
 		{
 			map.orient = ORTHOGONAL;
 		}
+		else if (orientation == "isometric")
+		{
+			map.orient = ISOMETRIC;
+		}
 
-		if (map_file.child("map").attribute("renderorder").as_string() == "right-down")
+		if (renderOrder == "right-down")
 		{
 			map.render = RIGHTDOWN;
 		}
@@ -205,7 +256,7 @@ bool j1Map::loadTileSet(int nTileSets)
 		for (int i = 0; i < map.tiles.At(0)->data->tileGrid.Count(); i++)
 		{
 			int p = *map.tiles.At(0)->data->tileGrid.At(i);
-			//LOG("%d", p);
+			LOG("%d", p);
 		}
 
 		map.tiles.At(0)->data->widthInTiles = map.widthPx / map.tileWidth;
@@ -276,8 +327,8 @@ SDL_Rect j1Map::GetTileRect(int id)
 	//LOG("%d",App->map->GetMapNode().tiles.start->data->margin);
 
 	SDL_Rect positionSprite;
-	positionSprite.h = App->map->GetMapNode()->tileHeigth;
-	positionSprite.w = App->map->GetMapNode()->tileWidth;
+	positionSprite.h = App->map->GetMapNode()->tiles.At(0)->data->tileHeight;
+	positionSprite.w = App->map->GetMapNode()->tiles.At(0)->data->tileWidth;
 	int marg = App->map->GetMapNode()->tiles.start->data->margin;
 	int spac = App->map->GetMapNode()->tiles.start->data->spacing;
 	int num_tiles_width = map.tiles.At(0)->data->widthInTiles;
